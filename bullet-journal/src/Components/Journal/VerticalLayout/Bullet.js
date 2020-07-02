@@ -5,11 +5,11 @@ function Bullet(props) {
     const [text, setText] = useState(props.bullet.text);
 
     return (
-        <Fragment>
+        <div>
             <textarea onChange={e => setText(e.target.value)}>
                 {text}
             </textarea>
-        </Fragment>
+        </div>
     )
 }
 
