@@ -1,66 +1,83 @@
-import React, {useState, Fragment} from 'react'
+import React, {useState, Fragment, useReducer} from 'react'
 import Bullet from './Bullet'
 
-function DayView(props) {
+const mockBullets = [
+    {
+        id: 1,
+        date: '07/06/2020',
+        category: 'Work', 
+        text: 'Work on Bullet Journal'
+    },
+    {
+        id: 2,
+        date: '07/06/2020',
+        category: 'Work',
+        text: '3 easy coding problems'
+    },
+    {
+        id: 3,
+        date: '07/06/2020',
+        category: 'Casual',
+        text: 'Stream on Twitch'
+    },
+    {
+        id: 4,
+        date: '07/06/2020',
+        category: 'Casual',
+        text: 'Practice piano'
+    }
+]
 
-    const mockBullets = [
-        {
-            date: '07/06/2020',
-            category: 'Work', 
-            text: 'Work on Bullet Journal'
-        },
-        {
-            date: '07/06/2020',
-            category: 'Work',
-            text: '3 easy coding problems'
-        },
-        {
-            date: '07/06/2020',
-            category: 'Casual',
-            text: 'Stream on Twitch'
-        },
-        {
-            date: '07/06/2020',
-            category: 'Casual',
-            text: 'Practice piano'
-        }
-    ]
+const mockDay = {
+    name: 'Wednesday',
+    date: '07/01/2020'
+}
+
+const initialState = {
+    day: mockDay,
+    bullets: mockBullets
+}
+
+const bulletsReducer = (bullets, action) => {
     
-    const [bullets, setBullets] = useState(mockBullets);
-    const [day, setDay] = useState({
-        name: 'Wednesday',
-        date: '07/01/2020'
-    })
+    const prevState = action.prevState;
+    
+    switch(action.type) {
+        case 'add' :
+            const b = {
+                date: prevState.day.name,
+                text: ''
+            }
+            return {...prevState, 
+                bullets: [...prevState.bullets, b]
+            }
 
-    const createBullet = () => {
-
+        case 'remove' :
+            return {...prevState, 
+                bullets: bullets.filter(e => e.id == action.payload.id)
+            }
     }
+}
 
-    const addBullet = (value) =>{
+function DayView() {
 
-        const b = {
-            date: '07/06/2020',
-            text: ''
-        }
-
-        setBullets([...bullets, b])
-    }
+    const [state, dispatchBullets] = useReducer(bulletsReducer, initialState);
 
     return (       
         <Fragment>
 
-            {day.name} <br/>
-            {day.date}
+            {state.day.name} <br/>
+            {state.day.date}
 
-            {bullets.map(b => {
+            {state.bullets.map(b => {
                 return (
-                    <Bullet bullet={b} />
+                    <Bullet key={b.id} bullet={b} />
                 )
-            })}
+            })}         
 
-            
-
-            <button onClick={addBullet}>+</button>
+            <button
+                onClick={dispatchBullets({type: 'add', prevState: state})}
+            >+</button>
         </Fragment>
     )
 }
