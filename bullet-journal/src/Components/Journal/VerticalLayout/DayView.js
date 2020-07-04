@@ -76,7 +76,7 @@ function DayView() {
             })}         
 
             <button
-                onClick={dispatchBullets({type: 'add', prevState: state})}
+                onClick={() => dispatchBullets({type: 'add', prevState: state})}
             >+</button>
         </Fragment>
     )
