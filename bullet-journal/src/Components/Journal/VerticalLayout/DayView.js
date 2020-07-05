@@ -1,5 +1,9 @@
-import React, {useState, Fragment, useReducer} from 'react'
+import React, {Fragment, useReducer} from 'react'
 import Bullet from './Bullet'
+import {v4 as uuid} from 'uuid'
+
+export const BulletsContext = React.createContext();
+export const TestContext = React.createContext();
 
 const mockBullets = [
     {
@@ -38,46 +42,69 @@ const initialState = {
     bullets: mockBullets
 }
 
-const bulletsReducer = (bullets, action) => {
+export const testFunction = (arg) => {
+    console.log(arg);
+}
+
+const bulletsReducer = (state, action) => {
     
-    const prevState = action.prevState;
+    //const prevState = action.prevState;
     
     switch(action.type) {
         case 'add' :
             const b = {
-                date: prevState.day.name,
+                id: uuid(),
+                date: state.day.name,
+                category: 'Work',
                 text: ''
             }
-            return {...prevState, 
-                bullets: [...prevState.bullets, b]
+            return {...state, 
+                bullets: [...state.bullets, b]
             }
 
         case 'remove' :
-            return {...prevState, 
-                bullets: bullets.filter(e => e.id == action.payload.id)
+            console.log('Action', action)
+            console.log('state', state)
+            return {...state, 
+                bullets: state.bullets.filter(e => e.id != action.id)
             }
+                
     }
 }
 
 function DayView() {
 
     const [state, dispatchBullets] = useReducer(bulletsReducer, initialState);
+    console.log(state)
 
-    return (       
+    return (
         <Fragment>
 
             {state.day.name} <br/>
             {state.day.date}
 
-            {state.bullets.map(b => {
-                return (
-                    <Bullet key={b.id} bullet={b} />
-                )
-            })}         
+            <BulletsContext.Provider 
+                value={{
+                    bullets: state.bullets, 
+                    dispatch: dispatchBullets
+                }}
+            >
 
-            <button
-                onClick={() => dispatchBullets({type: 'add', prevState: state})}
-            >+</button>
+                <div style={{margin:"2em"}} >
+                    {state.bullets.map(b => {
+                        return (
+                            
+                            <Bullet key={b.id} bullet={b} />
+                        )
+                    })}
+
+                    <button
+                        onClick={() => dispatchBullets({type: 'add'})}
+                    >+</button>
+                </div>
+
+            </BulletsContext.Provider>
+
         </Fragment>
     )
 }
