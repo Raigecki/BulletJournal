@@ -54,12 +54,27 @@ const bulletsReducer = (state, action) => {
         case 'add' :
             const b = {
                 id: uuid(),
-                date: state.day.name,
+                date: state.day.date,
                 category: 'Work',
                 text: ''
             }
             return {...state, 
                 bullets: [...state.bullets, b]
+            }
+
+        case 'save' :
+            console.log('inside save')
+            console.log(action.bullet)
+            let i = 0; 
+            for (; i < state.bullets.length; i++) 
+                if (state.bullets[i].id == action.bullet.id) break;
+            
+            console.log(i)
+            const newBullets = JSON.parse(JSON.stringify(state.bullets))
+            newBullets.splice(i, 1, action.bullet)
+            return {...state,
+                bullets: newBullets
+
             }
 
         case 'remove' :
