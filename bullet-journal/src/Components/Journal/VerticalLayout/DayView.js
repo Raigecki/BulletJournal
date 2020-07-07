@@ -1,6 +1,6 @@
 import React, {Fragment, useReducer} from 'react'
-import Bullet from './Bullet'
 import {v4 as uuid} from 'uuid'
+import Bullet from './Bullet';
 
 export const BulletsContext = React.createContext();
 export const TestContext = React.createContext();
@@ -98,27 +98,11 @@ function DayView() {
             {state.day.name} <br/>
             {state.day.date}
 
-            <BulletsContext.Provider 
-                value={{
-                    bullets: state.bullets, 
-                    dispatch: dispatchBullets
-                }}
-            >
-
-                <div style={{margin:"2em"}} >
-                    {state.bullets.map(b => {
-                        return (
-                            
-                            <Bullet key={b.id} bullet={b} />
-                        )
-                    })}
-
-                    <button
-                        onClick={() => dispatchBullets({type: 'add'})}
-                    >+</button>
-                </div>
-
-            </BulletsContext.Provider>
+            {state.bullets.map(b => {
+                return (
+                    <Bullet key={b.id} bullet={b} />
+                )
+            })}
 
         </Fragment>
     )
