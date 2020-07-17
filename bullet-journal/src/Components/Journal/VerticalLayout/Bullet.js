@@ -17,20 +17,39 @@ function Bullet(props) {
     const bulletsContext = useContext(BulletsContext);
 
     return (
-        <div 
+        <div style={{borderWidth: "5px"}}
             onMouseEnter={() => setOptions(true)} 
-            onMouseLeave={() => setOptions(false)}>
+            onMouseLeave={() => setOptions(false)}
+        >
+            
             {options ? 
-                <div>
-                    <span 
-                        onClick={() => bulletsContext.dispatch({type: 'remove', id: state.id})}
-                    >x</span> 
-                </div>        
+                <div className={"bullet-header"} style={{textAlign: "right"}}>
+                    <span style={{left:"0px"}}>&#10149;</span>
+                    <span style={{right:"0px"}}
+                        onClick={() => bulletsContext.dispatch(
+                            {type: 'remove', id: state.id}
+                        )}
+                    >&#10060;</span>
+                </div>
             : null }
 
-            <textarea onChange={e => setState({...state, text: e.target.value})}>            
+            <input type={"checkbox"} style={{margin:"2px 5px 2px 10px"}}></input>
+            <span 
+                contentEditable={"true"}
+                onChange={e => setState({...state, text: e.target.value})}
+                style={{display:"inline-block", width:"80%"}}
+            >            
                 {state.text}
-            </textarea>
+            </span>
+
+            {options ?
+                <div className={"bullet-footer"} style={{textAlign: "right"}}>
+                    <span 
+                        onClick={() => bulletsContext.dispatch(
+                            {type: 'save', bullet: state}
+                        )}>&#10004;</span>
+                </div>
+            : null }
         </div>
     )
 }
