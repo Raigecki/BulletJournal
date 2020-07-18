@@ -1,8 +1,6 @@
 import React, {Fragment, useReducer, useEffect, useState} from 'react'
 import {v4 as uuid} from 'uuid'
 import Bullet from './Bullet';
-import Container from 'react-bootstrap/Container';
-import DragNode from './DragNode';
 
 export const BulletsContext = React.createContext();
 export const TestContext = React.createContext();
@@ -132,21 +130,32 @@ function DayView() {
     }
 
     return (
-        <Fragment>          
+        <Fragment>
             {state.day.name} <br/>
-            {state.day.date}
-            {state.bullets.map((b, i) => (
-                <div
-                    key={b.id}
-                    draggable
-                    onDragStart={e => handleDragStart(e, i, dragging)}
-                    onDragEnd={e => handleDragEnd(e, dragging)}
-                    onDragEnter={e => {handleDragEnter(e, i)}}
-                >
-                    <Bullet  bullet={b} />
-                </div>
-                
-            ))}
+            {state.day.date} <br/><br/>
+            
+            <BulletsContext.Provider value={{
+                bullets: state.bullets, 
+                dispatch: dispatchBullets
+            }}>
+
+                {state.bullets.map((b, i) => (
+                    <div
+                        key={b.id}
+                        draggable
+                        onDragStart={e => handleDragStart(e, i, dragging)}
+                        onDragEnd={e => handleDragEnd(e, dragging)}
+                        onDragEnter={e => {handleDragEnter(e, i)}}
+                        style={{textAlign:"left", padding:"5px, 10px, 5px, 10px"}}
+                    >
+
+                        <Bullet bullet={b} />
+
+                    </div>
+
+                ))}
+            </BulletsContext.Provider>
+
 
         </Fragment>
     )
