@@ -10,25 +10,29 @@ const mockBullets = [
         id: 1,
         date: '07/06/2020',
         category: 'Work', 
-        text: 'Work on Bullet Journal'
+        text: 'Work on Bullet Journal',
+        completed: false
     },
     {
         id: 2,
         date: '07/06/2020',
         category: 'Work',
-        text: '3 easy coding problems'
+        text: '3 easy coding problems',
+        completed: false
     },
     {
         id: 3,
         date: '07/06/2020',
         category: 'Casual',
-        text: 'Stream on Twitch'
+        text: 'Stream on Twitch',
+        completed: false
     },
     {
         id: 4,
         date: '07/06/2020',
         category: 'Casual',
-        text: 'Practice piano'
+        text: 'Practice piano',
+        completed: false
     }
 ]
 
@@ -57,19 +61,10 @@ const bulletsReducer = (state, action) => {
             }
 
         case 'save' :
-            console.log('inside save')
-            console.log(action.bullet)
-            let i = 0; 
-            for (; i < state.bullets.length; i++) 
-                if (state.bullets[i].id === action.bullet.id) break;
-            
-            console.log(i)
-            const newBullets = JSON.parse(JSON.stringify(state.bullets))
+            const i = state.bullets.findIndex(b => b.id == action.bullet.id)
+            const newBullets = [...state.bullets]
             newBullets.splice(i, 1, action.bullet)
-            return {...state,
-                bullets: newBullets
-
-            }
+            return {...state,bullets: newBullets}
 
         case 'drag':
             const curr = {...state.bullets[action.dragIndex]};
@@ -79,11 +74,10 @@ const bulletsReducer = (state, action) => {
             return {...state, bullets: copy}
                             
         case 'remove' :
-            console.log('Action', action)
-            console.log('state', state)
             return {...state, 
                 bullets: state.bullets.filter(e => e.id !== action.id)
             }
+            
         default:
             return state
                 
@@ -97,14 +91,14 @@ function DayView() {
     const [dragging, setDragging] = useState({})
     
     const handleDragStart = (e, itemIndex, dragging) => {
-        dragging.dragItem = itemIndex;
-        dragging.dragElem = e.target;
+        dragging.dragItem = itemIndex
+        dragging.dragElem = e.target
         toggleDragStyle(e, dragging)
         console.log('Begin dragging', dragging)
     }
 
     const handleDragEnd = (e, dragging) => {
-        dragging = null;
+        dragging = null
         toggleDragStyle(e, dragging)
         console.log('End drag', dragging)
     }

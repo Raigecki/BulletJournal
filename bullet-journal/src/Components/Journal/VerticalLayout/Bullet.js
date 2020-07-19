@@ -1,21 +1,41 @@
 import React, {useState, useContext} from 'react'
-import {BulletsContext, TestContext} from './DayView'
+import {BulletsContext} from './DayView'
 
 function Bullet(props) {
-
-    const [options, setOptions] = useState(false);
     
+    const [options, setOptions] = useState(false);
     const [state, setState] = useState(
         {
             id: props.bullet.id,
             date: props.bullet.date,
             category: props.bullet.category, 
-            text: props.bullet.text
+            text: props.bullet.text,
+            completed: props.bullet.completed
         }
     )
 
     const bulletsContext = useContext(BulletsContext);
-    console.log(bulletsContext)
+    //console.log(bulletsContext)
+
+    const bulletOptionStyle = {
+        position: "fixed"
+        ,display:"block"   
+        ,zIndex:"1"                    
+        ,padding: "2px 3px 3px 3px"
+        ,transform: "translate(550%, -70%)"
+        ,border: "solid 2px #e8e3e3"
+        ,borderRadius: "5px"
+        ,backgroundColor: "white"
+    }
+    
+    const bulletTextStyle = {
+        display: "inline-block" 
+        ,padding: "0px 10px 0px 3px"
+        ,border: "0px"
+        ,outline: "none"
+        ,backgroundColor: options ? "#faf5fa" : "transparent"
+        ,textDecoration: state.completed ? "line-through" : null
+    }
 
     return (
         <div>
@@ -27,20 +47,10 @@ function Bullet(props) {
             }}
                 onMouseEnter={() => setOptions(true)}
                 onMouseLeave={() => setOptions(false)}
-            >
-                
+            >      
                 {options ? 
                     <div 
-                        className={"bullet-options"}
-                        style={{
-                            position: "fixed",
-                            display:"block",   
-                            zIndex:"1",                    
-                            padding: "1 1 1 1",
-                            transform: "translate(600%, -40%)",
-                            border: "solid 2px #e8e3e3",
-                            borderRadius: "7px"
-                        }}
+                        style={bulletOptionStyle}
                     >
                         <span style={{left:"0px"}}>&#9200;</span>
                         <span style={{right:"0px"}}
@@ -51,17 +61,30 @@ function Bullet(props) {
                     </div>
                 : null }
 
-                <input type={"checkbox"} style={{margin:"2px 5px 2px 10px"}}></input>
-                <span 
-                    contentEditable={"true"}
-                    onChange={e => setState({...state, text: e.target.value})}
-                    onBlur={() => bulletsContext.dispatch(
-                        {type: 'save', bullet: state}
-                    )}
-                    style={{display:"inline-block", padding:"0px 3px 0px 3px"}}
-                >            
-                    {state.text}
-                </span>
+                <input 
+                    type={"checkbox"} 
+                    style={{margin:"2px 5px 2px 10px"}}
+                    onClick={() => {
+                        setState({...state, completed: !state.completed})
+                        bulletsContext.dispatch({
+                            type:'save', bullet: state 
+                        })
+                    }}
+                    
+                />
+                <input 
+                    type="text"
+                    style={bulletTextStyle}
+                    value={state.text}
+                    onChange={e => {
+                        setState({...state, text: e.target.value})                       
+                        bulletsContext.dispatch({
+                            type:'save', id: props.bullet.id, bullet: state 
+                        })                 
+                    }}
+                >
+                </input>
+
             </div>
         </div>
     )
