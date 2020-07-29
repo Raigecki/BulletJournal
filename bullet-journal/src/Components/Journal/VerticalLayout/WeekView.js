@@ -1,4 +1,4 @@
-import React, {useState, useReducer} from 'react'
+import React, {useState, useReducer, useRef} from 'react'
 import Col from 'react-bootstrap/esm/Col'
 import Row from 'react-bootstrap/esm/Row'
 import Bullet from './Bullet'
@@ -48,12 +48,17 @@ const bulletsReducer = (state, action) => {
             return {...state,bullets: newBullets}
 
         case 'drag':
-            const curr = {...state[action.dragging.dragGroup][action.dragging.dragItem]};
-            const copy = [...state]
+            const curr = {...state[action.dragging.current.dragGroup]
+                    [action.dragging.current.dragItem]};
+            const copy = JSON.parse(JSON.stringify(state))
             console.log('Curr:', curr)
-            console.log('Copy:', copy)
-            copy[action.dragging.dragGroup].splice(action.dragging.dragItem, 1)
+            //console.log('Copy:', copy)
+            copy[action.dragging.current.dragGroup]
+                .splice(action.dragging.current.dragItem, 1)
+            //console.log('Curr:', curr)
+            console.log('Copy:', copy[action.dragging.current.dragGroup])
             copy[action.enterGroup].splice(action.enterItem , 0, curr);
+            console.log('Copy:', copy[action.dragging.current.dragGroup])
             return copy
                             
         case 'remove' :
@@ -194,7 +199,7 @@ function WeekView() {
         ]
     ]
 
-    const dragging = {};
+    const dragging = useRef({});
     const week = useState(mockWeek)
     const [bullets, dispatchBullets] = useReducer(bulletsReducer, mockBullets)
 
@@ -204,7 +209,11 @@ function WeekView() {
             const currDate = new Date(week[0].startDate)
 
             columns.push(
-                <Col key={getDayName(currDate.getDay() + g - 1)}>
+                <Col key={getDayName(currDate.getDay() + g - 1)}
+                    onDragEnter={ !bullets[g].length ? e =>
+                        handleDragEnter(e, g, 0) : null
+                    }             
+                >
                     {getDayName(currDate.getDay() + g - 1)} <br />
                     {getDate(currDate, g)} <br /> <br />
                     {bullets[g].map( (b, i) =>
@@ -225,21 +234,21 @@ function WeekView() {
     }
 
     const handleDragStart = (e, groupIndex, itemIndex, dragging) => {
-        dragging.dragItem = itemIndex
-        dragging.dragGroup = groupIndex
-        dragging.dragElem = e.target
+        dragging.current.dragItem = itemIndex
+        dragging.current.dragGroup = groupIndex
+        dragging.current.dragElem = e.target
         toggleDragStyle(e, dragging)
-        console.log('Dragging (', dragging.dragGroup, ',', dragging.dragItem, ')')
     }
 
     const handleDragEnd = (e, dragging) => {
-        dragging = {}
+        dragging.current = {};
         toggleDragStyle(e, dragging)
         console.log('End drag', dragging)
     }
 
     const handleDragEnter = (e, g, i) => {
-        if (!(g == dragging.dragGroup && i == dragging.dragItem)) {
+        if (g != dragging.current.dragGroup || i != dragging.current.dragItem) {
+            console.log('Dragging', bullets[dragging.current.dragGroup][dragging.current.dragItem])
             console.log('Entered ( ', g, ',', i, ')')
             
             dispatchBullets({
@@ -249,15 +258,16 @@ function WeekView() {
                 dragging: dragging
             })
             
-            dragging.dragGroup = g;
-            dragging.dragItem = i;
+            dragging.current.dragGroup = g;
+            dragging.current.dragItem = i;
+            console.log("here")
         }
     }
 
     const toggleDragStyle = (e, dragging) => {
         console.log('Toggle style')
         
-        if (dragging)
+        if (dragging.current)
             e.target.style.backgroundColor = 'lightblue'
         else 
             e.target.style.backgroundColor = 'transparent'

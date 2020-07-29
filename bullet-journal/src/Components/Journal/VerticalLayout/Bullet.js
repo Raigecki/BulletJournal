@@ -22,7 +22,7 @@ function Bullet(props) {
         ,display:"block"   
         ,zIndex:"1"                    
         ,padding: "2px 3px 3px 3px"
-        ,transform: "translate(550%, -70%)"
+        ,transform: "translate(450%, -70%)"
         ,border: "solid 2px #e8e3e3"
         ,borderRadius: "5px"
         ,backgroundColor: "white"

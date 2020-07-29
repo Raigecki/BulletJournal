@@ -1,4 +1,4 @@
-import React, {Fragment, useReducer, useEffect, useState} from 'react'
+import React, {Fragment, useReducer, useRef} from 'react'
 import {v4 as uuid} from 'uuid'
 import Bullet from './Bullet';
 
@@ -88,18 +88,19 @@ const bulletsReducer = (state, action) => {
 function DayView() {
 
     const [state, dispatchBullets] = useReducer(bulletsReducer, initialState);
-    const [dragging, setDragging] = useState({})
+    const dragging = useRef({})
+    console.log(dragging)
     
     const handleDragStart = (e, itemIndex, dragging) => {
-        dragging.dragItem = itemIndex
-        dragging.dragElem = e.target
-        toggleDragStyle(e, dragging)
+        dragging.current.dragItem = itemIndex
+        dragging.current.dragElem = e.target
+        toggleDragStyle(e, dragging.current)
         console.log('Begin dragging', dragging)
     }
 
     const handleDragEnd = (e, dragging) => {
-        dragging = null
-        toggleDragStyle(e, dragging)
+        dragging.current = {}
+        toggleDragStyle(e, dragging.current)
         console.log('End drag', dragging)
     }
 
@@ -108,16 +109,16 @@ function DayView() {
             dispatchBullets({
                 type: 'drag', 
                 enterIndex: i, 
-                dragIndex: dragging.dragItem
+                dragIndex: dragging.current.dragItem
             })
-            dragging.dragItem = i;
+            dragging.current.dragItem = i;
         }
     }
 
     const toggleDragStyle = (e, dragging) => {
         console.log('Toggle style')
         
-        if (dragging)
+        if (dragging.current)
             e.target.style.backgroundColor = 'lightblue'
         else 
             e.target.style.backgroundColor = 'transparent'
@@ -149,7 +150,6 @@ function DayView() {
 
                 ))}
             </BulletsContext.Provider>
-
 
         </Fragment>
     )
