@@ -1,18 +1,21 @@
-import React, {useState, useReducer, useRef} from 'react'
+import React, {useState, useReducer, useRef, Fragment} from 'react'
 import Col from 'react-bootstrap/esm/Col'
 import Row from 'react-bootstrap/esm/Row'
 import Bullet from './Bullet'
 import {v4 as uuid} from 'uuid'
 
+export const WeekBulletsContext = React.createContext();
+
 const getDayName = (day) => {
     switch(day) {
-        case 0: return "Monday"
-        case 1: return "Tuesday"
-        case 2: return "Wednesday"
-        case 3: return "Thursday"
-        case 4: return "Friday"
-        case 5: return "Saturday"
-        case 6: return "Sunday"
+        case 0: return 'Monday'
+        case 1: return 'Tuesday'
+        case 2: return 'Wednesday'
+        case 3: return 'Thursday'
+        case 4: return 'Friday'
+        case 5: return 'Saturday'
+        case 6: return 'Sunday'
+        default: return ''
     }
 }
 
@@ -28,7 +31,7 @@ const getDate = (startDate, day) => {
 }
 
 const bulletsReducer = (state, action) => {
-        
+    
     switch(action.type) {
         case 'add' :
             const b = {
@@ -37,15 +40,24 @@ const bulletsReducer = (state, action) => {
                 category: 'Work',
                 text: ''
             }
-            return {...state, 
+            return {...state,
                 bullets: [...state.bullets, b]
             }
 
         case 'save' :
-            const i = state.bullets.findIndex(b => b.id == action.bullet.id)
-            const newBullets = [...state.bullets]
-            newBullets.splice(i, 1, action.bullet)
-            return {...state,bullets: newBullets}
+            console.log('Bullet:', action.bullet)
+            let g; let i;
+            outer:
+            for (g = 0; g < state.length; g++) 
+                for (i = 0; i < state[g].length; i++) {
+                    console.log('', g,',', i, ':', state[g][i])
+                    if (state[g][i].id === action.bullet.id)
+                        break outer;
+                }
+
+            const newBullets = JSON.parse(JSON.stringify(state));
+            newBullets[g].splice(i, 1, action.bullet)
+            return newBullets
 
         case 'drag':
             const curr = {...state[action.dragging.current.dragGroup]
@@ -81,11 +93,11 @@ function WeekView() {
     const mockBullets = [     
         [
             {
-            id: 1,
-            date: '07/06/2020',
-            category: 'Work', 
-            text: 'Work on Bullet Journal',
-            completed: false
+                id: 1,
+                date: '07/06/2020',
+                category: 'Work', 
+                text: 'Work on Bullet Journal',
+                completed: false
             },
             {
                 id: 2,
@@ -224,13 +236,13 @@ function WeekView() {
                             onDragEnter={e => {handleDragEnter(e, g, i)}}
                             style={{textAlign:"left", padding:"5px, 10px, 5px, 10px"}}
                         >
-                            <Bullet key={b.id} bullet={b} />
+                            <Bullet key={b.id} bullet={b} view="week"/>
                         </div>
                     )}
                 </Col>
             )
         }
-    return <Row>{columns}</Row>
+        return <Row>{columns}</Row>
     }
 
     const handleDragStart = (e, groupIndex, itemIndex, dragging) => {
@@ -247,7 +259,7 @@ function WeekView() {
     }
 
     const handleDragEnter = (e, g, i) => {
-        if (g != dragging.current.dragGroup || i != dragging.current.dragItem) {
+        if (g !== dragging.current.dragGroup || i !== dragging.current.dragItem) {
             console.log('Dragging', bullets[dragging.current.dragGroup][dragging.current.dragItem])
             console.log('Entered ( ', g, ',', i, ')')
             
@@ -274,10 +286,15 @@ function WeekView() {
     }
 
     return (
-        
-        <div>
-            {createColumns()}
-        </div>
+        <Fragment>
+            <WeekBulletsContext.Provider value={{
+                bullets: bullets, 
+                dispatch: dispatchBullets
+            }}>
+                {createColumns()}
+            </WeekBulletsContext.Provider>
+
+        </Fragment>
     )
 }
 

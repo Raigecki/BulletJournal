@@ -1,8 +1,9 @@
 import React, {useState, useContext} from 'react'
-import {BulletsContext} from './DayView'
+import {DayBulletsContext} from './DayView'
+import {WeekBulletsContext} from './WeekView'
 
 function Bullet(props) {
-    
+
     const [options, setOptions] = useState(false);
     const [state, setState] = useState(
         {
@@ -13,8 +14,9 @@ function Bullet(props) {
             completed: props.bullet.completed
         }
     )
-
-    const bulletsContext = useContext(BulletsContext);
+    const currBulletsContext = props.view === 'day' ? 
+        DayBulletsContext : WeekBulletsContext
+    const bulletsContext = useContext(currBulletsContext)
     //console.log(bulletsContext)
 
     const bulletOptionStyle = {
@@ -67,7 +69,7 @@ function Bullet(props) {
                     onClick={() => {
                         setState({...state, completed: !state.completed})
                         bulletsContext.dispatch({
-                            type:'save', bullet: state 
+                            type:'save', bullet: {...state, completed: !state.completed} 
                         })
                     }}
                     

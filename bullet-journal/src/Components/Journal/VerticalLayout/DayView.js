@@ -2,8 +2,7 @@ import React, {Fragment, useReducer, useRef} from 'react'
 import {v4 as uuid} from 'uuid'
 import Bullet from './Bullet';
 
-export const BulletsContext = React.createContext();
-export const TestContext = React.createContext();
+export const DayBulletsContext = React.createContext();
 
 const mockBullets = [
     {
@@ -61,7 +60,7 @@ const bulletsReducer = (state, action) => {
             }
 
         case 'save' :
-            const i = state.bullets.findIndex(b => b.id == action.bullet.id)
+            const i = state.bullets.findIndex(b => b.id === action.bullet.id)
             const newBullets = [...state.bullets]
             newBullets.splice(i, 1, action.bullet)
             return {...state,bullets: newBullets}
@@ -129,7 +128,7 @@ function DayView() {
             {state.day.name} <br/>
             {state.day.date} <br/><br/>
             
-            <BulletsContext.Provider value={{
+            <DayBulletsContext.Provider value={{
                 bullets: state.bullets, 
                 dispatch: dispatchBullets
             }}>
@@ -144,12 +143,12 @@ function DayView() {
                         style={{textAlign:"left", padding:"5px, 10px, 5px, 10px"}}
                     >
 
-                        <Bullet bullet={b} />
+                        <Bullet bullet={b} view="day"/>
 
                     </div>
 
                 ))}
-            </BulletsContext.Provider>
+            </DayBulletsContext.Provider>
 
         </Fragment>
     )
