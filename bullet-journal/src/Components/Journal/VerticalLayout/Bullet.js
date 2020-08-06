@@ -57,7 +57,7 @@ function Bullet(props) {
                         <span style={{left:"0px"}}>&#9200;</span>
                         <span style={{right:"0px"}}
                             onClick={() => bulletsContext.dispatch(
-                                {type: 'remove', id: state.id}
+                                {type: 'remove', bullet : state}
                             )}
                         >&#10060;</span>
                     </div>

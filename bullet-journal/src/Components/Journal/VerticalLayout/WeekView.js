@@ -30,9 +30,23 @@ const getDate = (startDate, day) => {
     return dateString
 }
 
+const findItemById = (arr, id) => {
+    let i; let j;
+    outer:
+    for (i = 0; i < arr.length; i++) 
+        for (j = 0; j < arr[i].length; j++) {
+            console.log('', i,',', j, ':', arr[i][j])
+            if (arr[i][j].id === id) break outer
+    }
+    return [i, j]
+}
+
 const bulletsReducer = (state, action) => {
     
+    const newBullets = JSON.parse(JSON.stringify(state))
+    
     switch(action.type) {
+
         case 'add' :
             const b = {
                 id: uuid(),
@@ -45,17 +59,8 @@ const bulletsReducer = (state, action) => {
             }
 
         case 'save' :
-            console.log('Bullet:', action.bullet)
-            let g; let i;
-            outer:
-            for (g = 0; g < state.length; g++) 
-                for (i = 0; i < state[g].length; i++) {
-                    console.log('', g,',', i, ':', state[g][i])
-                    if (state[g][i].id === action.bullet.id)
-                        break outer;
-                }
-
-            const newBullets = JSON.parse(JSON.stringify(state));
+            const [g, i] = findItemById(newBullets, action.bullet.id)
+            console.log('Bullet:', action.bullet)          
             newBullets[g].splice(i, 1, action.bullet)
             return newBullets
 
@@ -68,15 +73,16 @@ const bulletsReducer = (state, action) => {
             copy[action.dragging.current.dragGroup]
                 .splice(action.dragging.current.dragItem, 1)
             //console.log('Curr:', curr)
-            console.log('Copy:', copy[action.dragging.current.dragGroup])
+            console.log('Copy before splice:', copy[action.dragging.current.dragGroup])
             copy[action.enterGroup].splice(action.enterItem , 0, curr);
-            console.log('Copy:', copy[action.dragging.current.dragGroup])
+            console.log('Copy after splice:', copy[action.dragging.current.dragGroup])
             return copy
                             
         case 'remove' :
-            return {...state, 
-                bullets: state.bullets.filter(e => e.id !== action.id)
-            }
+            const [h, k] = findItemById(newBullets, action.bullet.id)
+            newBullets[h].splice(k, 1)
+            console.log('newBullets:', newBullets)
+            return newBullets
             
         default:
             return state
@@ -258,7 +264,7 @@ function WeekView() {
         console.log('End drag', dragging)
     }
 
-    const handleDragEnter = (e, g, i) => {
+    const handleDragEnter = (e, g, i, dragging) => {
         if (g !== dragging.current.dragGroup || i !== dragging.current.dragItem) {
             console.log('Dragging', bullets[dragging.current.dragGroup][dragging.current.dragItem])
             console.log('Entered ( ', g, ',', i, ')')

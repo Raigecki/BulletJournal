@@ -74,7 +74,7 @@ const bulletsReducer = (state, action) => {
                             
         case 'remove' :
             return {...state, 
-                bullets: state.bullets.filter(e => e.id !== action.id)
+                bullets: state.bullets.filter(e => e.id !== action.bullet.id)
             }
             
         default:
