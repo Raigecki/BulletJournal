@@ -31,14 +31,10 @@ const getDate = (startDate, day) => {
 }
 
 const findItemById = (arr, id) => {
-    let i; let j;
-    outer:
-    for (i = 0; i < arr.length; i++) 
-        for (j = 0; j < arr[i].length; j++) {
-            console.log('', i,',', j, ':', arr[i][j])
-            if (arr[i][j].id === id) break outer
-    }
-    return [i, j]
+    for (let i = 0; i < arr.length; i++) 
+        for (let j = 0; j < arr[i].length; j++) {
+            if (arr[i][j].id === id)  return [i, j]
+    }   
 }
 
 const bulletsReducer = (state, action) => {
@@ -54,34 +50,27 @@ const bulletsReducer = (state, action) => {
                 category: 'Work',
                 text: ''
             }
-            return {...state,
-                bullets: [...state.bullets, b]
-            }
+            return [...state.bullets, b]
 
         case 'save' :
             const [g, i] = findItemById(newBullets, action.bullet.id)
-            console.log('Bullet:', action.bullet)          
             newBullets[g].splice(i, 1, action.bullet)
             return newBullets
 
         case 'drag':
             const curr = {...state[action.dragging.current.dragGroup]
                     [action.dragging.current.dragItem]};
-            const copy = JSON.parse(JSON.stringify(state))
             console.log('Curr:', curr)
-            //console.log('Copy:', copy)
-            copy[action.dragging.current.dragGroup]
+            newBullets[action.dragging.current.dragGroup]
                 .splice(action.dragging.current.dragItem, 1)
-            //console.log('Curr:', curr)
-            console.log('Copy before splice:', copy[action.dragging.current.dragGroup])
-            copy[action.enterGroup].splice(action.enterItem , 0, curr);
-            console.log('Copy after splice:', copy[action.dragging.current.dragGroup])
-            return copy
+            console.log('Copy before splice:', newBullets[action.dragging.current.dragGroup])
+            newBullets[action.enterGroup].splice(action.enterItem , 0, curr);
+            console.log('Copy after splice:', newBullets[action.dragging.current.dragGroup])
+            return newBullets
                             
         case 'remove' :
             const [h, k] = findItemById(newBullets, action.bullet.id)
             newBullets[h].splice(k, 1)
-            console.log('newBullets:', newBullets)
             return newBullets
             
         default:
@@ -237,9 +226,9 @@ function WeekView() {
                     {bullets[g].map( (b, i) =>
                         <div key={b.id}
                             draggable
-                            onDragStart={e => handleDragStart(e, g, i, dragging)}
-                            onDragEnd={e => handleDragEnd(e, dragging)}
-                            onDragEnter={e => {handleDragEnter(e, g, i)}}
+                            onDragStart={e => handleDragStart(e, g, i)}
+                            onDragEnd={e => handleDragEnd(e)}
+                            onDragEnter={e => handleDragEnter(e, g, i)}
                             style={{textAlign:"left", padding:"5px, 10px, 5px, 10px"}}
                         >
                             <Bullet key={b.id} bullet={b} view="week"/>
@@ -251,20 +240,21 @@ function WeekView() {
         return <Row>{columns}</Row>
     }
 
-    const handleDragStart = (e, groupIndex, itemIndex, dragging) => {
-        dragging.current.dragItem = itemIndex
-        dragging.current.dragGroup = groupIndex
+    const handleDragStart = (e, g, i) => {
+        dragging.current.dragItem = i
+        dragging.current.dragGroup = g
         dragging.current.dragElem = e.target
-        toggleDragStyle(e, dragging)
+        toggleDragStyle(e, g, i)
+        console.log('Dragstart:', dragging)
     }
 
-    const handleDragEnd = (e, dragging) => {
+    const handleDragEnd = (e) => {
         dragging.current = {};
         toggleDragStyle(e, dragging)
         console.log('End drag', dragging)
     }
 
-    const handleDragEnter = (e, g, i, dragging) => {
+    const handleDragEnter = (e, g, i) => {
         if (g !== dragging.current.dragGroup || i !== dragging.current.dragItem) {
             console.log('Dragging', bullets[dragging.current.dragGroup][dragging.current.dragItem])
             console.log('Entered ( ', g, ',', i, ')')
@@ -282,10 +272,10 @@ function WeekView() {
         }
     }
 
-    const toggleDragStyle = (e, dragging) => {
+    const toggleDragStyle = (e, g, i) => {
         console.log('Toggle style')
         
-        if (dragging.current)
+        if (dragging.current.dragGroup == g && dragging.current.dragItem == i)
             e.target.style.backgroundColor = 'lightblue'
         else 
             e.target.style.backgroundColor = 'transparent'
