@@ -30,13 +30,6 @@ const getDate = (startDate, day) => {
     return dateString
 }
 
-const findItemById = (arr, id) => {
-    for (let i = 0; i < arr.length; i++) 
-        for (let j = 0; j < arr[i].length; j++) {
-            if (arr[i][j].id === id)  return [i, j]
-    }   
-}
-
 const bulletsReducer = (state, action) => {
     
     const newBullets = JSON.parse(JSON.stringify(state))
@@ -54,8 +47,6 @@ const bulletsReducer = (state, action) => {
             return [...state, newBullet]
 
         case 'save' :
-            console.log('g:', action.indices.g, 'i:', action.indices.i)
-            console.log('bullet', action.bullet)
             newBullets[action.indices.g].splice(action.indices.i, 1, action.bullet)
             return newBullets
 
@@ -271,7 +262,7 @@ function WeekView() {
 
     const toggleDragStyle = (e, g, i) => {
 
-        if (dragging.current.dragGroup == g && dragging.current.dragItem == i)
+        if (dragging.current.dragGroup === g && dragging.current.dragItem === i)
             e.target.style.backgroundColor = 'lightblue'
         else 
             e.target.style.backgroundColor = 'transparent'

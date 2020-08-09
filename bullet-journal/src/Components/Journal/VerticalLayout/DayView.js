@@ -49,21 +49,19 @@ const bulletsReducer = (state, action) => {
         
     switch(action.type) {
         case 'add' :
-            const b = {
+            const newBullet = {
                 id: uuid(),
                 date: state.day.date,
                 category: 'Work',
+                completed: false,
                 text: ''
             }
-            return {...state, 
-                bullets: [...state.bullets, b]
-            }
+            return {...state, bullets: [...state.bullets, newBullet] }
 
         case 'save' :
-            const i = state.bullets.findIndex(b => b.id === action.bullet.id)
             const newBullets = [...state.bullets]
-            newBullets.splice(i, 1, action.bullet)
-            return {...state,bullets: newBullets}
+            newBullets.splice(action.indices.i, 1, action.bullet)
+            return {...state, bullets: newBullets}
 
         case 'drag':
             const curr = {...state.bullets[action.dragIndex]};
@@ -74,7 +72,7 @@ const bulletsReducer = (state, action) => {
                             
         case 'remove' :
             return {...state, 
-                bullets: state.bullets.filter(e => e.id !== action.bullet.id)
+                bullets: state.bullets.filter(e => e.id !== action.id)
             }
             
         default:
@@ -83,24 +81,20 @@ const bulletsReducer = (state, action) => {
     }
 }
 
-
 function DayView() {
 
     const [state, dispatchBullets] = useReducer(bulletsReducer, initialState);
     const dragging = useRef({})
-    console.log(dragging)
     
     const handleDragStart = (e, itemIndex, dragging) => {
         dragging.current.dragItem = itemIndex
         dragging.current.dragElem = e.target
         toggleDragStyle(e, dragging.current)
-        console.log('Begin dragging', dragging)
     }
 
     const handleDragEnd = (e, dragging) => {
         dragging.current = {}
         toggleDragStyle(e, dragging.current)
-        console.log('End drag', dragging)
     }
 
     const handleDragEnter = (e, i) => {
@@ -115,7 +109,6 @@ function DayView() {
     }
 
     const toggleDragStyle = (e, dragging) => {
-        console.log('Toggle style')
         
         if (dragging.current)
             e.target.style.backgroundColor = 'lightblue'
@@ -143,7 +136,7 @@ function DayView() {
                         style={{textAlign:"left", padding:"5px, 10px, 5px, 10px"}}
                     >
 
-                        <Bullet bullet={b} view="day"/>
+                        <Bullet bullet={b} view='day' indices={0, i} />
 
                     </div>
 
