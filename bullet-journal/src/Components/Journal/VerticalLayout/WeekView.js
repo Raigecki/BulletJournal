@@ -44,38 +44,35 @@ const bulletsReducer = (state, action) => {
     switch(action.type) {
 
         case 'add' :
-            const b = {
+            const newBullet = {
                 id: uuid(),
                 date: state.day.date,
                 category: 'Work',
+                completed: false,
                 text: ''
             }
-            return [...state.bullets, b]
+            return [...state, newBullet]
 
         case 'save' :
-            const [g, i] = findItemById(newBullets, action.bullet.id)
-            newBullets[g].splice(i, 1, action.bullet)
+            console.log('g:', action.indices.g, 'i:', action.indices.i)
+            console.log('bullet', action.bullet)
+            newBullets[action.indices.g].splice(action.indices.i, 1, action.bullet)
             return newBullets
 
         case 'drag':
             const curr = {...state[action.dragging.current.dragGroup]
                     [action.dragging.current.dragItem]};
-            console.log('Curr:', curr)
             newBullets[action.dragging.current.dragGroup]
                 .splice(action.dragging.current.dragItem, 1)
-            console.log('Copy before splice:', newBullets[action.dragging.current.dragGroup])
             newBullets[action.enterGroup].splice(action.enterItem , 0, curr);
-            console.log('Copy after splice:', newBullets[action.dragging.current.dragGroup])
             return newBullets
                             
         case 'remove' :
-            const [h, k] = findItemById(newBullets, action.bullet.id)
-            newBullets[h].splice(k, 1)
+            newBullets[action.indices.g].splice(action.indices.i, 1)
             return newBullets
             
         default:
-            return state
-                
+            return state        
     }
 }
 
@@ -223,15 +220,20 @@ function WeekView() {
                 >
                     {getDayName(currDate.getDay() + g - 1)} <br />
                     {getDate(currDate, g)} <br /> <br />
-                    {bullets[g].map( (b, i) =>
-                        <div key={b.id}
+                    {bullets[g].map( (bullet, i) =>
+                        <div key={bullet.id}
                             draggable
                             onDragStart={e => handleDragStart(e, g, i)}
                             onDragEnd={e => handleDragEnd(e)}
                             onDragEnter={e => handleDragEnter(e, g, i)}
                             style={{textAlign:"left", padding:"5px, 10px, 5px, 10px"}}
                         >
-                            <Bullet key={b.id} bullet={b} view="week"/>
+                            <Bullet 
+                                key={bullet.id} 
+                                bullet={bullet} 
+                                indices={{g, i}}
+                                view="week"
+                            />
                         </div>
                     )}
                 </Col>
@@ -245,19 +247,15 @@ function WeekView() {
         dragging.current.dragGroup = g
         dragging.current.dragElem = e.target
         toggleDragStyle(e, g, i)
-        console.log('Dragstart:', dragging)
     }
 
     const handleDragEnd = (e) => {
         dragging.current = {};
         toggleDragStyle(e, dragging)
-        console.log('End drag', dragging)
     }
 
     const handleDragEnter = (e, g, i) => {
         if (g !== dragging.current.dragGroup || i !== dragging.current.dragItem) {
-            console.log('Dragging', bullets[dragging.current.dragGroup][dragging.current.dragItem])
-            console.log('Entered ( ', g, ',', i, ')')
             
             dispatchBullets({
                 type: 'drag',
@@ -268,13 +266,11 @@ function WeekView() {
             
             dragging.current.dragGroup = g;
             dragging.current.dragItem = i;
-            console.log("here")
         }
     }
 
     const toggleDragStyle = (e, g, i) => {
-        console.log('Toggle style')
-        
+
         if (dragging.current.dragGroup == g && dragging.current.dragItem == i)
             e.target.style.backgroundColor = 'lightblue'
         else 
@@ -289,7 +285,6 @@ function WeekView() {
             }}>
                 {createColumns()}
             </WeekBulletsContext.Provider>
-
         </Fragment>
     )
 }

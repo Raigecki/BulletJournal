@@ -4,39 +4,26 @@ import {WeekBulletsContext} from './WeekView'
 
 function Bullet(props) {
 
-    const [options, setOptions] = useState(false);
-    const [state, setState] = useState(
-        {
-            id: props.bullet.id,
-            date: props.bullet.date,
-            category: props.bullet.category, 
-            text: props.bullet.text,
-            completed: props.bullet.completed
-        }
-    )
+    const [options, setOptions] = useState(false)
+    const {id, date, category, text, completed} = props.bullet
+
     const currBulletsContext = props.view === 'day' ? 
         DayBulletsContext : WeekBulletsContext
     const bulletsContext = useContext(currBulletsContext)
-    //console.log(bulletsContext)
 
-    const bulletOptionStyle = {
-        position: "fixed"
-        ,display:"block"   
-        ,zIndex:"1"                    
-        ,padding: "2px 3px 3px 3px"
-        ,transform: "translate(400%, -70%)"
-        ,border: "solid 2px #e8e3e3"
-        ,borderRadius: "5px"
-        ,backgroundColor: "white"
+    const moreOptionsStyle = {
+        display: options ? 'inline-block' : 'none'
     }
-    
+
     const bulletTextStyle = {
         display: "inline-block" 
         ,padding: "0px 10px 0px 3px"
         ,border: "0px"
         ,outline: "none"
+        ,wordWrap: 'break-word'
+        ,wordBreak: 'break-all'
         ,backgroundColor: options ? "#faf5fa" : "transparent"
-        ,textDecoration: state.completed ? "line-through" : null
+        ,textDecoration: completed ? "line-through" : null
     }
 
     return (
@@ -44,49 +31,60 @@ function Bullet(props) {
             
             <div style={{
                 borderWidth: "5px", 
-                padding:"3px 5px 3px 5px",
+                padding:"3px 5px",
                 backgroundColor: options ? "#faf5fa" : "transparent"
             }}
                 onMouseEnter={() => setOptions(true)}
                 onMouseLeave={() => setOptions(false)}
             >      
-                {options ? 
+                {false ?
                     <div 
-                        style={bulletOptionStyle}
+                        style={{
+                            width:'100%', height:'100%'
+                            ,position: 'fixed'
+                            ,top: '0px'
+                            ,left: '0px'
+                        }}
                     >
-                        <span style={{left:"0px"}}>&#9200;</span>
-                        <span style={{right:"0px"}}
-                            onClick={() => bulletsContext.dispatch(
-                                {type: 'remove', bullet : state}
-                            )}
-                        >&#10060;</span>
+                        <div>
+                            <span style={{left:"0px"}}>&#9200;</span>
+                            <span style={{right:"0px"}}
+                                onClick={() => bulletsContext.dispatch(
+                                    {type: 'remove', id : id}
+                                )}
+                            >&#10060;</span>
+                        </div>
                     </div>
                 : null }
 
                 <input 
-                    type={"checkbox"} 
+                    type="checkbox"
                     style={{margin:"2px 5px 2px 10px"}}
                     onClick={() => {
-                        setState({...state, completed: !state.completed})
                         bulletsContext.dispatch({
-                            type:'save', bullet: {...state, completed: !state.completed} 
+                            type:'save', 
+                            bullet: {...props.bullet, completed: !completed}, 
+                            indices: props.indices
                         })
-                    }}
-                    
+                    }}                  
                 />
+
                 <input 
                     type="text"
                     style={bulletTextStyle}
-                    value={state.text}
+                    value={text}
                     onChange={e => {
-                        setState({...state, text: e.target.value})                       
                         bulletsContext.dispatch({
-                            type:'save', id: props.bullet.id, bullet: state 
+                            type:'save', 
+                            bullet: {...props.bullet, text: e.target.value},
+                            indices: props.indices 
                         })                 
                     }}
                 >
                 </input>
 
+                <span style={moreOptionsStyle}
+                >&#8942;</span>
             </div>
         </div>
     )
