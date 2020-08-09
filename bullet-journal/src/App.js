@@ -1,14 +1,16 @@
 import React from 'react';
+import logo from './logo.svg';
 import './App.css';
-import DayView from './Components/Journal/VerticalLayout/DayView';
+import Layout from './Components/Journal/VerticalLayout/Layout';
 import WeekView from './Components/Journal/VerticalLayout/WeekView';
+import DayView from './Components/Journal/VerticalLayout/DayView';
 
 function App() {
   return (
     <div className="App">
       {/* <Layout /> */}
-      <WeekView />
-      {/* <DayView /> */}
+      {/* <WeekView /> */}
+      <DayView />
     </div>
   );
 }
