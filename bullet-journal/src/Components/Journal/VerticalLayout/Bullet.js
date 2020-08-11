@@ -23,7 +23,7 @@ function Bullet(props) {
         ,outline: "none"
         ,wordWrap: 'break-word'
         ,wordBreak: 'break-all'
-        ,backgroundColor: options ? "#faf5fa" : "transparent"
+        ,backgroundColor: options ? "#c9c9c9" : "transparent"
         ,textDecoration: completed ? "line-through" : null
     }
 
@@ -40,8 +40,8 @@ function Bullet(props) {
                 }
                 ,actionBarStyle : {
                     position: "fixed"
-                    ,left: (e.clientX - 10) 
-                    ,top: (e.clientY - 30)
+                    ,left: (e.clientX) 
+                    ,top: (e.clientY)
                     ,display:"block"   
                     ,zIndex:"1"
                     ,padding: "2px 3px 3px 3px"
@@ -65,17 +65,17 @@ function Bullet(props) {
             {actionBar.show ?
                 <div 
                     style={actionBar.overlayStyle} 
-                    onClick={e => {toggleActionBar(e, false); console.log('clicked')}}>
+                    onClick={e => {toggleActionBar(e, false) }}>
 
                     <div style={actionBar.actionBarStyle}>
-                        <span style={{left:"0px"}}>&#9200;</span>
-                        <span style={{right:"0px"}}
+                        <span style={{color:"blue"}}>Edit</span><br/>
+                        <span style={{color:"red"}}
                             onClick={() => bulletsContext.dispatch({
                                 type: 'remove', 
                                 id : id,
                                 indices: props.indices
                             })}
-                        >&#10060;</span>
+                        >Delete</span>
                     </div>
                 </div>
             : null }
@@ -83,7 +83,7 @@ function Bullet(props) {
             <div style={{
                 borderWidth: "5px", 
                 padding:"3px 5px",
-                backgroundColor: options ? "#faf5fa" : "transparent"
+                backgroundColor: options ? "#c9c9c9" : "transparent"
             }}
                 onMouseEnter={() => setOptions(true)}
                 onMouseLeave={() => setOptions(false)}
