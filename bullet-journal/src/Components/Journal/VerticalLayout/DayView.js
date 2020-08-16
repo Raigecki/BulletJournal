@@ -1,7 +1,8 @@
-import React, {Fragment, useReducer, useRef} from 'react'
+import React, {Fragment, useReducer, useRef, useState} from 'react'
 import {v4 as uuid} from 'uuid'
 import Bullet from './Bullet';
 import BulletModal from './BulletModal';
+import { Container, Button, Link } from 'react-floating-action-button'
 
 export const DayBulletsContext = React.createContext();
 
@@ -85,6 +86,7 @@ const bulletsReducer = (state, action) => {
 function DayView() {
 
     const [state, dispatchBullets] = useReducer(bulletsReducer, initialState);
+    const [showModal, setShowModal] = useState(false)
     const dragging = useRef({})
     
     const handleDragStart = (e, itemIndex, dragging) => {
@@ -142,7 +144,34 @@ function DayView() {
                     </div>
                 ))}
 
-                <BulletModal />
+                <Container>
+                    <Button
+                        tooltip="Create new category"
+                        icon="far fa-sticky-note" 
+                        styles={{backgroundColor:"#4287f5"}}
+                        className="fab-item btn btn-link btn-lg text-white"
+                    >C</Button>
+                    <Button onClick={() => setShowModal(true)}
+                        tooltip="Create new bullet"
+                        icon="fas fa-user-plus" 
+                        className="fab-item btn btn-link btn-lg text-white"
+                        styles={{backgroundColor:"#4287f5"}}
+                    >&#10085;</Button>
+                    <Button
+                        tooltip="The big plus button!"
+                        icon="fas fa-plus"
+                        styles={{
+                            fontSize: "2em"
+                            ,paddingBottom: "0.2em"
+                            ,backgroundColor:"#4287f5"
+                            ,color:"white"
+                        }}
+                        rotate={true}
+                    >+</Button>
+                </Container>
+
+                {showModal ? <BulletModal setShowModal={setShowModal}/> : null}
+                
 
             </DayBulletsContext.Provider>
 

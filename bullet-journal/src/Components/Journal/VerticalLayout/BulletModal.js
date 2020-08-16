@@ -23,15 +23,15 @@ const contentStyle = {
     ,margin: '10%'
     ,verticalAlign: 'middle'
     ,boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)'
-    ,webkitAnimationName: 'animatetop'
-    ,webkitAnimationDuration: '0.5s'
+    ,WebkitAnimationName: 'animatetop'
+    ,WebkitAnimationDuration: '0.5s'
     ,animationName: 'animatetop'
     ,animationDuration: '0.5s'
 }
 
 const headerStyle = {
     borderRadius: '0.5em 0.5em 0px 0px'
-    ,backgroundColor: '#8fcbff'
+    ,backgroundColor: '#4287f5'
     ,textAlign: 'center'
     ,height: '2.5em'
     ,color: 'white'
@@ -85,51 +85,56 @@ const closeIconHover = {
     ,cursor: 'pointer'
 }
 
-function BulletModal() {
+function BulletModal(props) {
 
-    const [showModal, setShowModal] = useState(true)
-    console.log(showModal)
+    const saveBullet = () => {}
+
     return (
-        showModal ? 
-            <div style={overlayStyle}>
-                
-                <div style={contentStyle}>
-        
-                    <div style={headerStyle}>
-                        <span></span>
-                        <span 
-                            style={closeIconStyle} 
-                            onClick={() => setShowModal(false)}
-                        >&times;</span>
-                    </div>
-        
-                    <div style={bodyStyle}>
-                        <input type="hidden" id="rowIndex" />
+        <div style={overlayStyle}>
             
-                        <select class="form-control" id="selectCategory">
-                        <optgroup>
-                            <option value="none" selected disabled>--Select Category--</option>
-                            <option value="food">Work</option>
-                            <option value="water">Casual</option>
-                        </optgroup>
-                        </select>
-            
-                        <textarea class="form-control" placeholder="To do..." />
+            <div style={contentStyle}>
+    
+                <div style={headerStyle}>
+                    <span></span>
+                    <span 
+                        style={closeIconStyle} 
+                        onClick={() => props.setShowModal(false)}
+                    >&times;</span>
+                </div>
+    
+                <div style={bodyStyle}>
+                    <input type="hidden" id="rowIndex" />
+        
+                    <select class="form-control" id="selectCategory">
+                    <optgroup>
+                        <option value="none" selected disabled>--Select Category--</option>
+                        <option value="food">Work</option>
+                        <option value="water">Casual</option>
+                    </optgroup>
+                    </select>
+        
+                    <textarea class="form-control" placeholder="To do..." />
 
-                        <br />
-                        <input type="button" value="Save"
-                        style={confirmButtonStyle} onclick="addRecord()" />
-                        <input type="button"  value="Cancel"
-                        style={cancelButtonStyle} onclick="deleteRecord()" />
-        
-                    </div> {/**modal body div*/}
-        
-                    <div class="modal-footer"> </div>
+                    
+    
+                </div> {/**modal body div*/}
+    
+                <div class="modal-footer"> 
+                    <input 
+                        type="button" value="Save"
+                        style={confirmButtonStyle} 
+                        onclick={() => saveBullet()} 
+                    />
+                    <input 
+                        type="button"  value="Cancel"
+                        style={cancelButtonStyle} 
+                        onclick="deleteRecord()" 
+                    />
+                </div>
 
-                </div> {/**modal content div */}
-        
-            </div>
-        : null
+            </div> {/**modal content div */}
+    
+        </div>
     )
 }
 
