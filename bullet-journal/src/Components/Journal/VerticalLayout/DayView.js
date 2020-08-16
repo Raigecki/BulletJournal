@@ -1,6 +1,7 @@
 import React, {Fragment, useReducer, useRef} from 'react'
 import {v4 as uuid} from 'uuid'
 import Bullet from './Bullet';
+import BulletModal from './BulletModal';
 
 export const DayBulletsContext = React.createContext();
 
@@ -139,8 +140,10 @@ function DayView() {
                         <Bullet bullet={b} view='day' indices={0, i} />
 
                     </div>
-
                 ))}
+
+                <BulletModal />
+
             </DayBulletsContext.Provider>
 
         </Fragment>
