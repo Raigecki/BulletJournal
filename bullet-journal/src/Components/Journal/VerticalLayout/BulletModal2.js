@@ -1,5 +1,6 @@
 import React, {useState, useContext} from 'react'
 import Modal from 'react-bootstrap/Modal'
+import Select from 'react-select'
 import {DayBulletsContext} from './DayView'
 import {WeekBulletsContext} from './WeekView'
 
@@ -10,7 +11,7 @@ function BulletModal2(props) {
     const currBulletsContext = props.view === 'day' ? 
     DayBulletsContext : WeekBulletsContext
     const bulletsContext = useContext(currBulletsContext)
-    console.log('BulletsContext', bulletsContext)
+    console.log('Categories', props.categories)
     return (
         <Modal
             {...props}
@@ -19,9 +20,7 @@ function BulletModal2(props) {
             centered
             >
             <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                Modal heading
-                </Modal.Title>
+                <Modal.Title>Add Bullet</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <select
@@ -29,13 +28,13 @@ function BulletModal2(props) {
                     onChange={e => setForm({...form, category: e.target.value})}
                 >
                     <option value="DEFAULT" disabled>Select Category</option>
-                    <option value="work">Work</option>
-                    <option value="casual">Casual</option>
+                    {props.categories.map(c => 
+                        <option key={c} value={c}>{c}</option>
+                    )}
                 </select> <br />
                 <textarea type="text" placeholder="Description" 
                     onChange={e => setForm({...form, text: e.target.value})}
                 />
-
             </Modal.Body>
             <Modal.Footer>
                 <button onClick={() => {

@@ -10,7 +10,7 @@ function Bullet(props) {
     const currBulletsContext = props.view === 'day' ? 
         DayBulletsContext : WeekBulletsContext
     const bulletsContext = useContext(currBulletsContext)
-
+ 
     const moreOptionsStyle = {
         display: options ? 'inline-block' : 'none'
     }

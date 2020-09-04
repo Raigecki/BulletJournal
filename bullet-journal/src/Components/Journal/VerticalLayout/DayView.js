@@ -1,7 +1,7 @@
 import React, {Fragment, useReducer, useRef, useState} from 'react'
 import {v4 as uuid} from 'uuid'
 import Bullet from './Bullet';
-import BulletModal from './BulletModal';
+import BulletModal from './BulletModal2';
 import { Container, Button, Link } from 'react-floating-action-button'
 
 export const DayBulletsContext = React.createContext();
@@ -39,7 +39,8 @@ const mockBullets = [
 
 const mockDay = {
     name: 'Wednesday',
-    date: '07/01/2020'
+    date: '07/01/2020',
+    categories: ['Work', 'Casual', 'Other']
 }
 
 const initialState = {
@@ -53,16 +54,17 @@ const bulletsReducer = (state, action) => {
         case 'add' :
             const newBullet = {
                 id: uuid(),
-                date: state.day.date,
-                category: 'Work',
+                date: action.date,
+                category: action.category,
                 completed: false,
-                text: ''
+                text: action.text
             }
             return {...state, bullets: [...state.bullets, newBullet] }
 
         case 'save' :
+            console.log('Index:', action.indices)
             const newBullets = [...state.bullets]
-            newBullets.splice(action.indices.i, 1, action.bullet)
+            newBullets.splice(action.indices, 1, action.bullet)
             return {...state, bullets: newBullets}
 
         case 'drag':
@@ -170,8 +172,12 @@ function DayView() {
                     >+</Button>
                 </Container>
 
-                {showModal ? <BulletModal setShowModal={setShowModal}/> : null}
-                
+                <BulletModal
+                    show={showModal}
+                    categories={state.day.categories}
+                    onHide={() => setShowModal(false)}
+                    view = "day"
+                />    
 
             </DayBulletsContext.Provider>
 
