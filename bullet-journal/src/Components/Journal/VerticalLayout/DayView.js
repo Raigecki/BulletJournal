@@ -1,6 +1,8 @@
-import React, {Fragment, useReducer, useRef} from 'react'
+import React, {Fragment, useReducer, useRef, useState} from 'react'
 import {v4 as uuid} from 'uuid'
 import Bullet from './Bullet';
+import BulletModal from './BulletModal2';
+import { Container, Button, Link } from 'react-floating-action-button'
 
 export const DayBulletsContext = React.createContext();
 
@@ -37,7 +39,8 @@ const mockBullets = [
 
 const mockDay = {
     name: 'Wednesday',
-    date: '07/01/2020'
+    date: '07/01/2020',
+    categories: ['Work', 'Casual', 'Other']
 }
 
 const initialState = {
@@ -51,16 +54,17 @@ const bulletsReducer = (state, action) => {
         case 'add' :
             const newBullet = {
                 id: uuid(),
-                date: state.day.date,
-                category: 'Work',
+                date: action.date,
+                category: action.category,
                 completed: false,
-                text: ''
+                text: action.text
             }
             return {...state, bullets: [...state.bullets, newBullet] }
 
         case 'save' :
+            console.log('Index:', action.indices)
             const newBullets = [...state.bullets]
-            newBullets.splice(action.indices.i, 1, action.bullet)
+            newBullets.splice(action.indices, 1, action.bullet)
             return {...state, bullets: newBullets}
 
         case 'drag':
@@ -84,6 +88,7 @@ const bulletsReducer = (state, action) => {
 function DayView() {
 
     const [state, dispatchBullets] = useReducer(bulletsReducer, initialState);
+    const [showModal, setShowModal] = useState(false)
     const dragging = useRef({})
     
     const handleDragStart = (e, itemIndex, dragging) => {
@@ -139,8 +144,41 @@ function DayView() {
                         <Bullet bullet={b} view='day' indices={0, i} />
 
                     </div>
-
                 ))}
+
+                <Container>
+                    <Button
+                        tooltip="Create new category"
+                        icon="far fa-sticky-note" 
+                        styles={{backgroundColor:"#4287f5"}}
+                        className="fab-item btn btn-link btn-lg text-white"
+                    >C</Button>
+                    <Button onClick={() => setShowModal(true)}
+                        tooltip="Create new bullet"
+                        icon="fas fa-user-plus" 
+                        className="fab-item btn btn-link btn-lg text-white"
+                        styles={{backgroundColor:"#4287f5"}}
+                    >&#10085;</Button>
+                    <Button
+                        tooltip="The big plus button!"
+                        icon="fas fa-plus"
+                        styles={{
+                            fontSize: "2em"
+                            ,paddingBottom: "0.2em"
+                            ,backgroundColor:"#4287f5"
+                            ,color:"white"
+                        }}
+                        rotate={true}
+                    >+</Button>
+                </Container>
+
+                <BulletModal
+                    show={showModal}
+                    categories={state.day.categories}
+                    onHide={() => setShowModal(false)}
+                    view = "day"
+                />    
+
             </DayBulletsContext.Provider>
 
         </Fragment>
