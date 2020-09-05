@@ -7,8 +7,8 @@ function App() {
   return (
     <div className="App">
       {/* <Layout /> */}
-      <WeekView />
-      {/* <DayView /> */}
+      {/* <WeekView /> */}
+      <DayView />
     </div>
   );
 }
