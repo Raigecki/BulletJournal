@@ -25,7 +25,6 @@ function LoginModal() {
           email: email
         }
       })
-      console.log(signUpRes)
     }
     catch (err) { setError(err); console.log(err) }
   }
