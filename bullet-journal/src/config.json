@@ -1,0 +1,10 @@
+{
+  "api": { 
+    "invokeUrl": "https://bulletjournal-dev.auth.us-west-2.amazoncognito.com"
+  },
+  "cognito": {
+    "REGION": "us-west-2",
+    "USER_POOL_ID": "us-west-2_NNe5qKvaz",
+    "APP_CLIENT_ID": "1a4m14e8lg352pkojb2157g1hv"
+  }
+}
