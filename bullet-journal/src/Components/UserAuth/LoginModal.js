@@ -1,11 +1,17 @@
 import React, {useState} from "react";
 import {Modal, Form, Button} from 'react-bootstrap'
 import {Auth} from 'aws-amplify'
+import {useHistory} from 'react-router-dom'
 
-function LoginModal() {
-  const [error, setError] = useState(null);
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+function LoginModal(props) {
+
+  const {auth, setAuth} = props;
+
+  const [error, setError] = useState(null)
+  const [email, setEmail] = useState()
+  const [password, setPassword] = useState()
+
+  let history = useHistory()
 
   const signIn = async (e) => {
     e.preventDefault()
@@ -13,6 +19,10 @@ function LoginModal() {
 
     try {
       const user = await Auth.signIn(email, password)
+      localStorage.setItem('bulletJournalUser', JSON.stringify(user))
+      history.push('/dayview')
+      auth.setAuthStatus(true)
+      auth.setUser(user)
       console.log('User:', user)
     }
     catch(err) {setError(err); console.log(err)}

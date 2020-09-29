@@ -40,11 +40,11 @@ function LoginModal() {
       <Modal.Body>
         <Form>
           <Form.Control as="input" placeholder="Enter e-mail" 
-            onChange={(e) => setEmail(e.target.value)}/>
+            onChange={e => setEmail(e.target.value)}/>
           <Form.Control type="password" placeholder="Enter password" 
-            onChange={(e) => setPassword(e.target.value)}/>
+            onChange={e => setPassword(e.target.value)}/>
           <Form.Control type="password" placeholder="Confirm password" 
-            onChange={(e) => setConfirmPassword(e.target.value)}/>
+            onChange={e => setConfirmPassword(e.target.value)}/>
         </Form>
 
         {error ? <span style={{color: "red"}}>{error.message}</span> : null}   
